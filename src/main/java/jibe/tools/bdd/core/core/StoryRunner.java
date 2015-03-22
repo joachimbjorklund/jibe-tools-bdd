@@ -29,6 +29,10 @@ public class StoryRunner implements ExecutionContext {
         this.executionContext = executionContext;
     }
 
+    public Story story() {
+        return story;
+    }
+
     public void run() {
         for (Scenario scenario : story.scenarios()) {
             runScenario(scenario);
