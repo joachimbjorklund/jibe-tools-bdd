@@ -1,4 +1,4 @@
-package jibe.tools.bdd.core.core;
+package jibe.tools.bdd.core;
 
 import jibe.tools.bdd.api.DescriptiveType;
 import jibe.tools.bdd.api.Scenario;

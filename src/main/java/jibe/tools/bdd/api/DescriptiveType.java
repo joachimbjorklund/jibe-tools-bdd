@@ -8,5 +8,5 @@ public enum DescriptiveType {
     When,
     Then,
     And,
-    But, Scenario, Story;
+    But, Scenario, Story, Eventually;
 }

@@ -3,6 +3,10 @@ package jibe.tools.bdd.api;
 /**
  *
  */
-public interface Execution {
-    void execute(ExecutionContext executionContext);
+public interface Execution<T> {
+    void preExecute(ExecutionContext ctx);
+
+    T execute(ExecutionContext ctx);
+
+    void postExecute(ExecutionContext ctx);
 }

@@ -1,4 +1,4 @@
-package jibe.tools.bdd.core.core;
+package jibe.tools.bdd.core;
 
 import jibe.tools.bdd.api.DescriptiveType;
 import jibe.tools.bdd.api.Execution;
@@ -51,6 +51,12 @@ class DefaultScenario implements Scenario {
     @Override
     public Scenario then(String description, Execution... executions) {
         add(new DefaultExecutionsHolder(this, DescriptiveType.Then, description, executions));
+        return this;
+    }
+
+    @Override
+    public Scenario eventually(String description, Execution... executions) {
+        add(new DefaultExecutionsHolder(this, DescriptiveType.Eventually, description, executions));
         return this;
     }
 

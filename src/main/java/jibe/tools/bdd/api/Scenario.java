@@ -17,4 +17,6 @@ public interface Scenario extends Descriptive {
     Scenario when(String description, Execution... executions);
 
     Scenario then(String description, Execution... executions);
+
+    Scenario eventually(String description, Execution... executions);
 }

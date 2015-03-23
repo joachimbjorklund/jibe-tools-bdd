@@ -1,4 +1,4 @@
-package jibe.tools.bdd.core.core;
+package jibe.tools.bdd.core;
 
 import com.google.common.collect.Lists;
 import jibe.tools.bdd.api.DescriptiveType;

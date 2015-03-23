@@ -1,7 +1,7 @@
 package jibe.tools.bdd.api;
 
-import jibe.tools.bdd.core.core.DefaultStory;
-import jibe.tools.bdd.core.core.StoryRunner;
+import jibe.tools.bdd.core.DefaultStory;
+import jibe.tools.bdd.core.StoryRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
@@ -23,25 +23,27 @@ public class BDDApiTest {
                 .asA("admin user")
                 .iWantTo("have the system secured by a 2 step login procedure");
 
-        Execution registerOperator = new Execution() {
+        Execution registerOperator = new AbstractExecution() {
             @Override
-            public void execute(ExecutionContext executionContext) {
+            public Object execute(ExecutionContext ctx) {
                 LOGGER.info("register operator");
-                executionContext.put("operatorId", 1);
+                ctx.put("operatorId", 1);
+                return null;
             }
         };
 
-        Execution registerAdminUser = new Execution() {
+        Execution registerAdminUser = new AbstractExecution() {
             @Override
-            public void execute(ExecutionContext executionContext) {
-                LOGGER.info("register admin user: " + executionContext.get("operatorId"));
+            public Object execute(ExecutionContext ctx) {
+                LOGGER.info("register admin user: " + ctx.get("operatorId"));
+                return null;
             }
         };
 
-        Execution noopExecution = new Execution() {
+        Execution noopExecution = new AbstractExecution() {
             @Override
-            public void execute(ExecutionContext executionContext) {
-
+            public Object execute(ExecutionContext ctx) {
+                return null;
             }
         };
 
