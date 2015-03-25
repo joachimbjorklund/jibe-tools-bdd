@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 
@@ -58,6 +59,19 @@ public class DefaultExecutionContext implements ExecutionContext {
             }
         }
         return answer;
+    }
+
+    @Override
+    public <T> T requiresOneByType(Class<T> type) {
+        Iterator<ExecutionContextKeyValue<T>> iterator = findByType(type).iterator();
+        if (!iterator.hasNext()) {
+            throw new NoSuchElementException("of type: " + type);
+        }
+        ExecutionContextKeyValue<T> answer = iterator.next();
+        if (iterator.hasNext()) {
+            throw new RuntimeException("requiresOneByType: found more than one of type: " + type);
+        }
+        return answer.getValue();
     }
 
     @Override

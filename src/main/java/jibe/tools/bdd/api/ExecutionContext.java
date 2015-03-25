@@ -20,5 +20,7 @@ public interface ExecutionContext {
 
     <T> Set<ExecutionContextKeyValue<T>> findByType(Class<T> type);
 
+    <T> T requiresOneByType(Class<T> type);
+
     <T> ExecutionContextKeyValue<T> findByKey(String key, Class<T> type);
 }
