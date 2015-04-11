@@ -16,11 +16,13 @@ public interface ExecutionContext {
 
     Object put(String key, Object value);
 
+    Object put(Object value);
+
     Object remove(String key);
 
     <T> Set<ExecutionContextKeyValue<T>> findByType(Class<T> type);
 
-    <T> T requiresOneByType(Class<T> type);
+    <T> T requiresOneOfType(Class<T> type);
 
     <T> ExecutionContextKeyValue<T> findByKey(String key, Class<T> type);
 }

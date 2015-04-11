@@ -45,6 +45,14 @@ public class DefaultExecutionContext implements ExecutionContext {
     }
 
     @Override
+    public Object put(Object value) {
+        if (value == null) {
+            return null;
+        }
+        return put(value.getClass().getName(), value);
+    }
+
+    @Override
     public Object remove(String key) {
         return ctx.remove(key);
     }
@@ -62,14 +70,14 @@ public class DefaultExecutionContext implements ExecutionContext {
     }
 
     @Override
-    public <T> T requiresOneByType(Class<T> type) {
+    public <T> T requiresOneOfType(Class<T> type) {
         Iterator<ExecutionContextKeyValue<T>> iterator = findByType(type).iterator();
         if (!iterator.hasNext()) {
             throw new NoSuchElementException("of type: " + type);
         }
         ExecutionContextKeyValue<T> answer = iterator.next();
         if (iterator.hasNext()) {
-            throw new RuntimeException("requiresOneByType: found more than one of type: " + type);
+            throw new RuntimeException("requiresOneOfType: found more than one of type: " + type);
         }
         return answer.getValue();
     }
@@ -102,6 +110,11 @@ public class DefaultExecutionContext implements ExecutionContext {
 
         public Builder put(String key, Object value) {
             ctx.put(key, value);
+            return this;
+        }
+
+        public Builder put(Object value) {
+            ctx.put(value);
             return this;
         }
 

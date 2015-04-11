@@ -1,5 +1,6 @@
 package jibe.tools.bdd.core;
 
+import com.google.common.collect.Lists;
 import jibe.tools.bdd.api.DescriptiveType;
 import jibe.tools.bdd.api.Execution;
 import jibe.tools.bdd.api.ExecutionsHolder;
@@ -33,7 +34,13 @@ class DefaultScenario implements Scenario {
 
     @Override
     public Scenario given(String description, Execution... executions) {
-        add(new DefaultExecutionsHolder(this, DescriptiveType.Given, description, executions));
+        add(new DefaultExecutionsHolder(DescriptiveType.Given, description, executions));
+        return this;
+    }
+
+    @Override
+    public Scenario given(ExecutionsHolder... executionsHolders) {
+        add(executionsHolders);
         return this;
     }
 
@@ -44,24 +51,42 @@ class DefaultScenario implements Scenario {
 
     @Override
     public Scenario when(String description, Execution... executions) {
-        add(new DefaultExecutionsHolder(this, DescriptiveType.When, description, executions));
+        add(new DefaultExecutionsHolder(DescriptiveType.When, description, executions));
+        return this;
+    }
+
+    @Override
+    public Scenario when(ExecutionsHolder... executionsHolders) {
+        add(executionsHolders);
         return this;
     }
 
     @Override
     public Scenario then(String description, Execution... executions) {
-        add(new DefaultExecutionsHolder(this, DescriptiveType.Then, description, executions));
+        add(new DefaultExecutionsHolder(DescriptiveType.Then, description, executions));
+        return this;
+    }
+
+    @Override
+    public Scenario then(ExecutionsHolder... executionsHolders) {
+        add(executionsHolders);
         return this;
     }
 
     @Override
     public Scenario eventually(String description, Execution... executions) {
-        add(new DefaultExecutionsHolder(this, DescriptiveType.Eventually, description, executions));
+        add(new DefaultExecutionsHolder(DescriptiveType.Eventually, description, executions));
         return this;
     }
 
-    private void add(ExecutionsHolder executionHolder) {
-        executionHolders.add(executionHolder);
+    @Override
+    public Scenario eventually(ExecutionsHolder... executionsHolders) {
+        add(executionsHolders);
+        return this;
+    }
+
+    private void add(ExecutionsHolder... executionHolders) {
+        this.executionHolders.addAll(Lists.newArrayList(executionHolders));
     }
 
     @Override

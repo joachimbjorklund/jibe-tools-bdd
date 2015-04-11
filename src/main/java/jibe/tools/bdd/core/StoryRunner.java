@@ -48,29 +48,70 @@ public class StoryRunner {
     }
 
     public void run(Scenario scenario) {
-        Iterator<ExecutionsHolder> it = scenario.executionHolders().iterator();
-        Throwable reThrow = null;
+        Iterator<ExecutionsHolder> it = getSortedExecutionHolders(scenario).iterator();
         while (it.hasNext()) {
             ExecutionsHolder executionsHolder = it.next();
             Iterator<Execution> it2 = executionsHolder.executions().iterator();
+            Execution execution = null;
             while (it2.hasNext()) {
                 try {
-                    Execution execution = it2.next();
-                    if ((reThrow != null) && !executionsHolder.descriptiveType().equals(DescriptiveType.Eventually)) {
-                        continue;
-                    }
+                    execution = it2.next();
                     execute(execution);
-                } catch (Throwable e) {
-                    if (reThrow == null) {
-                        reThrow = e;
-                    }
+                } catch (Exception e) {
+                    execution.exception(e);
+                    continueOnException(e, executionsHolder, it, it2);
                 }
             }
         }
+    }
 
-        if (reThrow != null) {
-            throw Throwables.propagate(reThrow);
+    private void continueOnException(Exception reThrowException, ExecutionsHolder currentHolder, Iterator<ExecutionsHolder> executionaHolderIterator,
+            Iterator<Execution> executionIterator) {
+        if (currentHolder.descriptiveType().equals(DescriptiveType.Eventually)) {
+            while (executionIterator.hasNext()) {
+                Execution execution = null;
+                try {
+                    execution = executionIterator.next();
+                    execute(execution);
+                } catch (Exception e) {
+                    execution.exception(e);
+                    LOGGER.error(e.getMessage());
+                }
+            }
         }
+        while (executionaHolderIterator.hasNext()) {
+            ExecutionsHolder executionsHolder = executionaHolderIterator.next();
+            if (!executionsHolder.descriptiveType().equals(DescriptiveType.Eventually)) {
+                continue;
+            }
+
+            Iterator<Execution> it2 = executionsHolder.executions().iterator();
+            Execution execution = null;
+            while (it2.hasNext()) {
+                try {
+                    execution = it2.next();
+                    execute(execution);
+                } catch (Exception e) {
+                    execution.exception(e);
+                    LOGGER.error(e.getMessage());
+                }
+            }
+        }
+        throw Throwables.propagate(reThrowException);
+    }
+
+    private List<ExecutionsHolder> getSortedExecutionHolders(Scenario scenario) {
+        List<ExecutionsHolder> answer = new ArrayList<>();
+        List<ExecutionsHolder> eventuallys = new ArrayList<>();
+        for (ExecutionsHolder eh : scenario.executionHolders()) {
+            if (eh.descriptiveType().equals(DescriptiveType.Eventually)) {
+                eventuallys.add(eh);
+            } else {
+                answer.add(eh);
+            }
+        }
+        answer.addAll(eventuallys);
+        return answer;
     }
 
     public ExecutionContext executionContext() {
@@ -78,13 +119,14 @@ public class StoryRunner {
     }
 
     private void execute(Execution execution) {
+        LOGGER.info(execution.describe());
         execution.preExecute(executionContext);
         Object value = execution.execute(executionContext);
         if (execution instanceof Assertion) {
             assertExecutionValue(value, execution.getClass().getName());
         }
         if (value != null) {
-            executionContext.put(execution.getClass().getName() + LAST_EXECUTION_VALUE_KEY, value);
+            executionContext.put(value);
         }
         execution.postExecute(executionContext);
         executed.add(execution);
